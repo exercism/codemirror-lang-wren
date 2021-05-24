@@ -5,9 +5,10 @@
   "main": "dist/index.cjs",
   "scripts": {
     "test": "mocha test/test-*.js",
-    "build": "lezer-generator src/lezer/wren.grammar -o src/lezer/parser && rollup -c",
+    "build": "npm run build-grammar && rollup -c",
     "build-debug": "lezer-generator src/wren.grammar --names -o src/lezer/parser && rollup -c",
-    "build-devtool": "npm run build && npm run rollup -c rollup.config.devtool.js"
+    "build-grammar": "lezer-generator src/lezer/wren.grammar -o src/lezer/parser",
+    "build-devtool": "npm run build-grammar && rollup -c rollup.config.devtool.js"
   },
   "author": "Josh Goebel <me@joshgoebel.com>",
   "license": "MIT",
@@ -17,16 +18,16 @@
   },
   "module": "dist/index.es.js",
   "dependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "lezer": "^0.13.0",
-    "rollup": "^2.49.0"
+    "@codemirror/autocomplete": "^0.18.5",
+    "@codemirror/highlight": "^0.18.4",
+    "@codemirror/language": "^0.18.1"
   },
   "devDependencies": {
-    "@codemirror/autocomplete": "^0.18.5",
     "@codemirror/basic-setup": "^0.18.1",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "lezer-generator": "^0.13.0",
     "mocha": "^8.1.3",
-    "rollup": "^2.27.1"
+    "rollup": "^2.27.1",
+    "lezer": "^0.13.0"
   }
 }
