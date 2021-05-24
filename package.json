@@ -1,25 +1,29 @@
 {
-  "name": "base",
-  "version": "1.0.0",
-  "description": "",
-  "main": "editor.js",
+  "name": "codemirror-lang-wren",
+  "version": "0.5",
+  "description": "Wren language support for the CodeMirror code editor",
+  "main": "dist/index.cjs",
   "scripts": {
     "test": "mocha test/test-*.js",
     "build": "lezer-generator src/lezer/wren.grammar -o src/lezer/parser && rollup -c",
-    "build-debug": "lezer-generator src/javascript.grammar --names -o src/parser && rollup -c",
-    "prepare": "npm run build"
+    "build-debug": "lezer-generator src/wren.grammar --names -o src/lezer/parser && rollup -c",
+    "build-devtool": "npm run build && npm run rollup -c rollup.config.devtool.js"
   },
   "author": "Josh Goebel <me@joshgoebel.com>",
   "license": "MIT",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs"
+  },
+  "module": "dist/index.es.js",
   "dependencies": {
-    "@codemirror/autocomplete": "^0.18.5",
-    "@codemirror/basic-setup": "^0.18.1",
-    "@codemirror/lang-javascript": "^0.18.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "lezer": "^0.13.0",
     "rollup": "^2.49.0"
   },
   "devDependencies": {
+    "@codemirror/autocomplete": "^0.18.5",
+    "@codemirror/basic-setup": "^0.18.1",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "lezer-generator": "^0.13.0",
     "mocha": "^8.1.3",
