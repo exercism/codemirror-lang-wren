@@ -11,9 +11,11 @@
   exp @left,
   times @left,
   plus @left,
+  range @left,
   shift @left,
   loop,
   rel @left,
+  is @left,
   equal @left,
   bitOr @left,
   bitXor @left,
@@ -136,11 +138,10 @@ expressionNoComma {
   ObjectExpression { "{" commaSep<Property> ~destructure "}" } |
   UnaryExpression |
   ParenthesizedExpression |
-  FunctionExpression |
   BinaryExpression |
   ConditionalExpression { expressionNoComma !ternary questionOp expressionNoComma LogicOp<":"> expressionNoComma } |
   AssignmentExpression |
-  PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
+  // PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
   Blah {
     ClassName !highest "." VariableName "(" ")"
   } |
@@ -170,12 +171,9 @@ PatternProperty {
 
 functionSignature { ParamList  }
 
-FunctionExpression {
-  kw<"function"> Star? VariableDefinition? functionSignature Block
-}
-
+// https://wren.io/syntax.html#precedence-and-associativity
 UnaryExpression {
-  !prefix (LogicOp<"!"> | BitOp<"~"> | incdec | incdecPrefix | ArithOp<"+" | "-">)
+  !prefix (LogicOp<"!"> | BitOp<"~"> | ArithOp<"+" | "-">)
   expressionNoComma
 }
 
@@ -183,14 +181,16 @@ BinaryExpression {
   expressionNoComma !exp ArithOp<"**"> expressionNoComma |
   expressionNoComma !times (divide | ArithOp<"%"> | ArithOp<"*">) expressionNoComma |
   expressionNoComma !plus ArithOp<"+" | "-"> expressionNoComma |
-  expressionNoComma !shift BitOp<">>" ">"? | "<<"> expressionNoComma |
-  expressionNoComma !rel (LessThan | CompareOp<"<=" | ">" "="?> | kw<"in"> | kw<"instanceof">) expressionNoComma |
-  expressionNoComma !equal CompareOp<"==" "="? | "!=" "="?> expressionNoComma |
-  expressionNoComma !bitOr BitOp { "|" } expressionNoComma |
-  expressionNoComma !bitXor BitOp<"^"> expressionNoComma |
+  expressionNoComma !range (".." | "...") expressionNoComma |
+  expressionNoComma !shift BitOp<">>" | "<<"> expressionNoComma |
   expressionNoComma !bitAnd BitOp { "&" } expressionNoComma |
+  expressionNoComma !bitXor BitOp<"^"> expressionNoComma |
+  expressionNoComma !bitOr BitOp { "|" } expressionNoComma |
+  expressionNoComma !rel (LessThan | CompareOp<"<=" | ">" "="?>) expressionNoComma |
+  // expressionNoComma !is "is" expressionNoComma |
+  expressionNoComma !equal CompareOp<"==" | "!="> expressionNoComma |
   expressionNoComma !and LogicOp<"&&"> expressionNoComma |
-  expressionNoComma !or LogicOp<"||" | "??"> expressionNoComma
+  expressionNoComma !or LogicOp<"||"> expressionNoComma
 }
 
 AssignmentExpression {
@@ -234,7 +234,7 @@ pkwMod<term> { @extend[@name={term}]<word, term> }
 
 boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
-Star { "*" }
+// Star { "*" }
 
 VariableName { identifier ~arrow }
 
@@ -252,10 +252,10 @@ questionOp[@name=LogicOp] { "?" }
 
 @skip { whitespace | LineComment | BlockComment }
 
-@external tokens incdecToken from "./tokens" {
- incdec[@name=ArithOp],
- incdecPrefix[@name=ArithOp]
-}
+// @external tokens incdecToken from "./tokens" {
+//  incdec[@name=ArithOp],
+//  incdecPrefix[@name=ArithOp]
+// }
 
 @tokens {
   whitespace { std.whitespace+ }
