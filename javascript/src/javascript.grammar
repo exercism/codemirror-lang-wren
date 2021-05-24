@@ -1,4 +1,5 @@
 @precedence {
+  methodEqual @left,
   typeargs,
   typeMember,
   typePrefix,
@@ -10,7 +11,6 @@
   readonly,
   newArgs,
   call,
-  taggedTemplate,
   prefix,
   postfix,
   typeof,
@@ -37,20 +37,21 @@
 
 @top Script { statement+ }
 
+// as break class construct continue else false for foreign if import
+// in is null return static super this true var while
+
 statement[@isGroup=Statement] {
   ImportDeclaration |
-  ForStatement { !forLoop kw<"for"> (ForSpec | ForInSpec ) statement } |
+  ForStatement { !forLoop kw<"for"> (ForInSpec ) statement } |
   WhileStatement { kw<"while"> ParenthesizedExpression statement } |
-  WithStatement { kw<"with"> ParenthesizedExpression statement } |
-  DoStatement { kw<"do"> statement kw<"while"> ParenthesizedExpression semi } |
+  DoStatement { kw<"do"> statement kw<"while"> ParenthesizedExpression  } |
   IfStatement { kw<"if"> ParenthesizedExpression statement (!else kw<"else"> statement)? } |
-  ReturnStatement { kw<"return"> (noSemi expression)? semi } |
-  BreakStatement { kw<"break"> (noSemi Label)? semi } |
-  ContinueStatement { kw<"continue"> (noSemi Label)? semi } |
+  ReturnStatement { kw<"return">  } |
+  BreakStatement { kw<"break"> } |
+  ContinueStatement { kw<"continue"> } |
   Block |
-  LabeledStatement { Label ":" statement } |
   declaration |
-  ExpressionStatement { expression semi }
+  ExpressionStatement { expression }
 }
 
 ImportDeclaration {
@@ -59,12 +60,6 @@ ImportDeclaration {
 
 ImportName {
   VariableDefinition (ckw<"as"> VariableDefinition)?
-}
-
-ForSpec {
-  "("
-  (VariableDeclaration | expression ";" | ";") expression? ";" expression?
-  ")"
 }
 
 forXSpec<op> {
@@ -179,8 +174,7 @@ FunctionExpression {
 }
 
 UnaryExpression {
-  !prefix (ckw<"await"> | ckw<"yield"> | kw<"void"> | kw<"typeof"> | kw<"delete"> |
-           LogicOp<"!"> | BitOp<"~"> | incdec | incdecPrefix | ArithOp<"+" | "-">)
+  !prefix (LogicOp<"!"> | BitOp<"~"> | incdec | incdecPrefix | ArithOp<"+" | "-">)
   expressionNoComma
 }
 
@@ -239,8 +233,6 @@ async { @extend[@name=async]<identifier, "async"> }
 
 pkwMod<term> { @extend[@name={term}]<word, term> }
 
-semi { ";" | insertSemi }
-
 boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
 Star { "*" }
@@ -249,19 +241,15 @@ VariableName { identifier ~arrow }
 
 VariableDefinition { identifier ~arrow }
 
-Label { identifier }
-
 PropertyName { word }
 
-ClassMethodName { word "="? }
+ClassMethodName { word !methodEqual "="? | "+" | "-" | "*"  }
 
 PropertyNameDefinition { word }
 
 questionOp[@name=LogicOp] { "?" }
 
 @skip { whitespace | LineComment | BlockComment }
-
-@external tokens noSemicolon from "./tokens" { noSemi }
 
 @external tokens incdecToken from "./tokens" {
  incdec[@name=ArithOp],
@@ -327,6 +315,6 @@ questionOp[@name=LogicOp] { "?" }
   "?." "." "," ";" ":"
 }
 
-@external tokens insertSemicolon from "./tokens" { insertSemi }
+// @external tokens insertSemicolon from "./tokens" { insertSemi }
 
 @detectDelim
