@@ -3,6 +3,7 @@
   methodEqual @left,
   union @left,
   else @right,
+  member,
   call,
   prefix,
   times @left,
@@ -40,9 +41,13 @@ statement[@isGroup=Statement] {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   Block |
-  ClassDeclaration |
-  VariableDeclaration |
+  declaration |
   ExpressionStatement { expression }
+}
+
+declaration {
+  ClassDeclaration |
+  VariableDeclaration
 }
 
 ImportDeclaration {
@@ -115,7 +120,6 @@ BlockArgs {
   "|" commaSep<VariableName> "|"
 }
 
-
 expression[@isGroup=Expression] {
   expressionNoComma | SequenceExpression
 }
@@ -136,18 +140,27 @@ expressionNoComma {
   ObjectExpression { "{" commaSep<Property> ~destructure "}" } |
   UnaryExpression |
   ParenthesizedExpression |
+  MemberExpression |
   BinaryExpression |
   ConditionalExpression { expressionNoComma !ternary questionOp expressionNoComma LogicOp<":"> expressionNoComma } |
   AssignmentExpression |
-  // PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
-  Blah {
-    ClassName !highest "." VariableName "(" ")"
-  } |
+  // Blah {
+  //   ClassName !highest "." VariableName "(" ")"
+  // } |
   CallExpression {
     // expressionNoComma !call ArgList
-    VariableName !call ArgList BlockMaybeArgs? |
-    VariableName !call BlockMaybeArgs
+    expressionNoComma !call ArgList BlockMaybeArgs? |
+    expressionNoComma !call BlockMaybeArgs
   }
+}
+
+MemberExpression {
+  expressionNoComma !member ("." PropertyName | "[" expression "]")
+}
+
+AssignmentExpression {
+  // FieldName !assign "=" expressionNoComma |
+  (VariableName | MemberExpression) !assign "=" expressionNoComma
 }
 
 ParenthesizedExpression { "(" expression ")" }
@@ -159,8 +172,7 @@ ArrayExpression {
 propName { PropertyNameDefinition | "[" expression "]" | Number | String }
 
 Property {
-  propName functionSignature Block |
-  propName ~destructure (":" expressionNoComma)?
+  expressionNoComma ~destructure (":" expressionNoComma)?
 }
 
 PatternProperty {
@@ -190,17 +202,8 @@ BinaryExpression {
   expressionNoComma !or LogicOp<"||"> expressionNoComma
 }
 
-AssignmentExpression {
-  // FieldName !assign "=" expressionNoComma |
-  VariableName !assign "=" expressionNoComma
-}
-
 // FieldName {
 //   "_" identifier
-// }
-
-// MemberExpression {
-//   expressionNoComma !member (("." | "?.") PropertyName | "[" expression "]")
 // }
 
 ArgList {
@@ -237,7 +240,12 @@ VariableDefinition { identifier ~arrow }
 
 PropertyName { word }
 
-ClassMethodName { word !methodEqual "="? | "+" | "-" | "*"  }
+ClassMethodName { word !methodEqual "="? |
+  "+" | "-" | "*" | divide |
+  "%" | "<" "="? | ">" "="? |
+  "==" | "!=" | "&" | "|" |
+  "!" | "~" | "-"
+}
 
 PropertyNameDefinition { word }
 
@@ -280,8 +288,9 @@ questionOp[@name=LogicOp] { "?" }
 
   @precedence { word, whitespace }
 
-  @precedence { uppercaseWord, identifier }
-  @precedence { uppercaseWord, word }
+  // @precedence { uppercaseWord, identifier }
+  // @precedence { uppercaseWord, word }
+  @precedence { ".", Number }
 
   Number {
     (std.digit (std.digit)* ("." (std.digit)*)? | "." std.digit (std.digit)*)
@@ -308,7 +317,7 @@ questionOp[@name=LogicOp] { "?" }
 
   "(" ")" "[" "]" "{" "}"
 
-  "." "," ":"
+  "." "," ":" "|"
 }
 
 // @external tokens insertSemicolon from "./tokens" { insertSemi }
