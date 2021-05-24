@@ -1,10 +1,16 @@
 import {EditorState, EditorView, basicSetup} from "@codemirror/basic-setup"
 import {javascript} from "./lang-javascript/src/index.js"
+import {HighlightStyle, classHighlightStyle, tags as t} from "@codemirror/highlight"
+
 
 let editor = new EditorView({
   state: EditorState.create({
-    extensions: [basicSetup, javascript({})],
-    theme: "tomorrow-night-eighties",
+    extensions: [
+      basicSetup,
+      javascript({}),
+      classHighlightStyle
+    ],
+    // theme: "tomorrow-night-eighties",
     doc: `// This file provides examples of syntactic constructs in wren, which is mainly
 // interesting for testing syntax highlighters.
 
@@ -21,6 +27,8 @@ class SyntaxExample {
     // Method calls
     variables
     fields()
+
+    var x = """wow really"""
 
     // Block arguments
     fields { block }

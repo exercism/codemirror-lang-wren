@@ -53,6 +53,7 @@ export const javascriptLanguage = LezerLanguage.define({
         this: t.self,
         null: t.null,
         Star: t.modifier,
+        "Blah": t.modifier,
         "VariableName FieldName": t.variableName,
         "CallExpression/VariableName": t.function(t.variableName),
         VariableDefinition: t.definition(t.variableName),
@@ -60,7 +61,7 @@ export const javascriptLanguage = LezerLanguage.define({
         PropertyName: t.propertyName,
         "CallExpression/MemberExpression/PropertyName": t.function(t.propertyName),
         "FunctionDeclaration/VariableDefinition": t.function(t.definition(t.variableName)),
-        "ClassDeclaration/VariableDefinition": t.definition(t.className),
+        "ClassDeclaration/ClassName": t.definition(t.className),
         "PropertyNameDefinition ClassMethodName": t.definition(t.propertyName),
         UpdateOp: t.updateOperator,
         LineComment: t.lineComment,
@@ -80,17 +81,6 @@ export const javascriptLanguage = LezerLanguage.define({
         ".": t.derefOperator,
         ", ;": t.separator,
 
-        TypeName: t.typeName,
-        TypeDefinition: t.definition(t.typeName),
-        "type enum interface implements namespace module declare": t.definitionKeyword,
-        "abstract global privacy readonly": t.modifier,
-        "is keyof unique infer": t.operatorKeyword,
-
-        JSXAttributeValue: t.string,
-        JSXText: t.content,
-        "JSXStartTag JSXStartCloseTag JSXSelfCloseEndTag JSXEndTag": t.angleBracket,
-        "JSXIdentifier JSXNameSpacedName": t.tagName,
-        "JSXAttribute/JSXIdentifier JSXAttribute/JSXNameSpacedName": t.propertyName
       })
     ]
   }),

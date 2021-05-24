@@ -1,19 +1,14 @@
 @precedence {
+  highest @left,
   methodEqual @left,
-  typeargs,
-  typeMember,
-  typePrefix,
   intersection @left,
   union @left,
-  typeTernary @right,
   else @right,
   member,
-  readonly,
   newArgs,
   call,
   prefix,
   postfix,
-  typeof,
   exp @left,
   times @left,
   plus @left,
@@ -50,7 +45,9 @@ statement[@isGroup=Statement] {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   Block |
-  declaration |
+  FunctionDeclaration |
+  ClassDeclaration |
+  VariableDeclaration |
   ExpressionStatement { expression }
 }
 
@@ -71,19 +68,14 @@ forXSpec<op> {
 
 ForInSpec { forXSpec<kw<"in">> }
 
-declaration {
-  FunctionDeclaration |
-  ClassDeclaration |
-  VariableDeclaration
-}
 
 FunctionDeclaration {
-  async? !statement kw<"function"> Star? VariableDefinition? functionSignature Block
+  !statement kw<"function"> Star? VariableDefinition? functionSignature Block
 }
 
 ClassDeclaration {
-  !statement kw<"class"> VariableDefinition
-  (kw<"is"> VariableDefinition)?
+  !statement kw<"class"> ClassName
+  (kw<"is"> ClassName)?
   ClassBody
 }
 
@@ -92,7 +84,7 @@ ClassBody {
 }
 
 MethodDeclaration[group=ClassItem] {
-  (pkwMod<"static"> | pkwMod<"construct">)?
+  (pkwMod<"static"> | pkwMod<"foreign"> | pkwMod<"construct">)?
   ClassMethodName
   functionSignature?
   Block
@@ -122,6 +114,15 @@ Block {
   !statement "{" statement* "}"
 }
 
+BlockMaybeArgs {
+  !statement "{" BlockArgs? statement* "}"
+}
+
+BlockArgs {
+  "|" commaSep<VariableName> "|"
+}
+
+
 expression[@isGroup=Expression] {
   expressionNoComma | SequenceExpression
 }
@@ -147,7 +148,14 @@ expressionNoComma {
   ConditionalExpression { expressionNoComma !ternary questionOp expressionNoComma LogicOp<":"> expressionNoComma } |
   AssignmentExpression |
   PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
-  CallExpression { expressionNoComma !call ArgList }
+  Blah {
+    uppercaseWord !highest "." VariableName "(" ")"
+  } |
+  CallExpression {
+    // expressionNoComma !call ArgList
+    VariableName !call ArgList BlockMaybeArgs? |
+    VariableName !call BlockMaybeArgs
+  }
 }
 
 ParenthesizedExpression { "(" expression ")" }
@@ -170,7 +178,7 @@ PatternProperty {
 functionSignature { ParamList  }
 
 FunctionExpression {
-  async? kw<"function"> Star? VariableDefinition? functionSignature Block
+  kw<"function"> Star? VariableDefinition? functionSignature Block
 }
 
 UnaryExpression {
@@ -227,8 +235,6 @@ kw<term> { @specialize[@name={term}]<identifier, term> }
 
 ckw<term> { @extend[@name={term}]<identifier, term> }
 
-async { @extend[@name=async]<identifier, "async"> }
-
 // Contextual keyword in property context
 
 pkwMod<term> { @extend[@name={term}]<word, term> }
@@ -238,6 +244,8 @@ boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 Star { "*" }
 
 VariableName { identifier ~arrow }
+
+ClassName { uppercaseWord ~arrow }
 
 VariableDefinition { identifier ~arrow }
 
@@ -279,6 +287,10 @@ questionOp[@name=LogicOp] { "?" }
 
   identifierChar { std.asciiLetter | $[_$\u{a1}-\u{10ffff}] }
 
+  uppercaseChar { std.asciiUppercase }
+
+  uppercaseWord { uppercaseChar (identifierChar | std.digit)* }
+
   word { identifierChar (identifierChar | std.digit)* }
 
   identifier { word }
@@ -286,6 +298,9 @@ questionOp[@name=LogicOp] { "?" }
   @precedence { identifier, whitespace }
 
   @precedence { word, whitespace }
+
+  @precedence { uppercaseWord, identifier }
+  @precedence { uppercaseWord, word }
 
   Number {
     (std.digit ("_" | std.digit)* ("." ("_" | std.digit)*)? | "." std.digit ("_" | std.digit)*)
@@ -297,7 +312,8 @@ questionOp[@name=LogicOp] { "?" }
   }
 
   String {
-    '"' (![\\\n"] | "\\" _)* '"'?
+    '"' (![\\\n"] | "\\" _)* '"'? |
+    '"""' (_)* '"""'
   }
 
   ArithOp<expr> { expr }
