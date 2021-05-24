@@ -8,6 +8,10 @@
     "type": "git",
     "url": "https://github.com/exercism/codemirror-lang-wren"
   },
+  "type": "module",
+  "imports": {
+    "#parser": "./src/lezer/parser.js"
+  },
   "main": "dist/index.cjs",
   "module": "dist/index.es.js",
   "exports": {
@@ -20,7 +24,7 @@
     "test": "mocha test/test-*.js",
     "prepare": "npm run build",
     "build": "npm run build-grammar && rollup -c",
-    "build-debug": "lezer-generator src/wren.grammar --names -o src/lezer/parser && rollup -c",
+    "build-debug": "lezer-generator src/lezer/wren.grammar --names -o src/lezer/parser && rollup -c",
     "build-grammar": "lezer-generator src/lezer/wren.grammar -o src/lezer/parser",
     "build-devtool": "npm run build-grammar && rollup -c rollup.config.devtool.js"
   },
