@@ -3,12 +3,50 @@ import {javascript} from "./lang-javascript/src/index.js"
 import {HighlightStyle, classHighlightStyle, tags as t} from "@codemirror/highlight"
 
 
+// classHighlightStyle.match = ((tag, scope) => {
+//   console.log(tag,scope);
+//   return scope.name;
+// }).bind(classHighlightStyle);
+
+const highlightStyle = HighlightStyle.define([
+  {tag: t.link, class: "cmt-link"},
+  {tag: t.heading, class: "cmt-heading"},
+  {tag: t.emphasis, class: "cmt-emphasis"},
+  {tag: t.strong, class: "cmt-strong"},
+  {tag: t.keyword, class: "cmt-keyword"},
+  {tag: t.atom, class: "cmt-atom"},
+  {tag: t.bool, class: "cmt-bool"},
+  {tag: t.url, class: "cmt-url"},
+  {tag: t.labelName, class: "cmt-labelName"},
+  {tag: t.className, class: "cmt-className"},
+  {tag: t.inserted, class: "cmt-inserted"},
+  {tag: t.deleted, class: "cmt-deleted"},
+  {tag: t.literal, class: "cmt-literal"},
+  {tag: t.string, class: "cmt-string"},
+  {tag: t.number, class: "cmt-number"},
+  {tag: [t.regexp, t.escape, t.special(t.string)], class: "cmt-string2"},
+  {tag: t.variableName, class: "cmt-variableName"},
+  {tag: t.local(t.variableName), class: "cmt-variableName cmt-local"},
+  {tag: t.definition(t.variableName), class: "cmt-variableName cmt-definition"},
+  {tag: t.special(t.variableName), class: "cmt-variableName2"},
+  {tag: t.typeName, class: "cmt-typeName"},
+  {tag: t.namespace, class: "cmt-namespace"},
+  {tag: t.macroName, class: "cmt-macroName"},
+  {tag: t.propertyName, class: "cmt-propertyName"},
+  {tag: t.operator, class: "cmt-operator"},
+  {tag: t.comment, class: "cmt-comment"},
+  {tag: t.meta, class: "cmt-meta"},
+  {tag: t.invalid, class: "cmt-invalid"},
+  {tag: t.punctuation, class: "cmt-punctuation"}
+])
+
+
 let editor = new EditorView({
   state: EditorState.create({
     extensions: [
       basicSetup,
       javascript({}),
-      classHighlightStyle
+      highlightStyle
     ],
     // theme: "tomorrow-night-eighties",
     doc: `// This file provides examples of syntactic constructs in wren, which is mainly

@@ -54,6 +54,7 @@ export const javascriptLanguage = LezerLanguage.define({
         null: t.null,
         Star: t.modifier,
         "Blah": t.modifier,
+        "ClassName": t.className,
         "VariableName FieldName": t.variableName,
         "CallExpression/VariableName": t.function(t.variableName),
         VariableDefinition: t.definition(t.variableName),

@@ -39,7 +39,6 @@ statement[@isGroup=Statement] {
   ImportDeclaration |
   ForStatement { !forLoop kw<"for"> (ForInSpec ) statement } |
   WhileStatement { kw<"while"> ParenthesizedExpression statement } |
-  DoStatement { kw<"do"> statement kw<"while"> ParenthesizedExpression  } |
   IfStatement { kw<"if"> ParenthesizedExpression statement (!else kw<"else"> statement)? } |
   ReturnStatement { kw<"return">  } |
   BreakStatement { kw<"break"> } |
@@ -149,7 +148,7 @@ expressionNoComma {
   AssignmentExpression |
   PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
   Blah {
-    uppercaseWord !highest "." VariableName "(" ")"
+    ClassName !highest "." VariableName "(" ")"
   } |
   CallExpression {
     // expressionNoComma !call ArgList
@@ -245,7 +244,7 @@ Star { "*" }
 
 VariableName { identifier ~arrow }
 
-ClassName { uppercaseWord ~arrow }
+ClassName { uppercaseWord }
 
 VariableDefinition { identifier ~arrow }
 
