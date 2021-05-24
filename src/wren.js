@@ -1,5 +1,5 @@
 // import {parser} from "lezer-javascript"
-import {parser} from "../../javascript/src/parser.js"
+import {parser} from "./lezer/parser.js"
 import {LezerLanguage, LanguageSupport,
         delimitedIndent, flatIndent, continuedIndent, indentNodeProp,
         foldNodeProp, foldInside} from "@codemirror/language"
@@ -10,7 +10,7 @@ import {snippets} from "./snippets"
 /// A language provider based on the [Lezer JavaScript
 /// parser](https://github.com/lezer-parser/javascript), extended with
 /// highlighting and indentation information.
-export const javascriptLanguage = LezerLanguage.define({
+export const wrenLanguage = LezerLanguage.define({
   parser: parser.configure({
     props: [
       indentNodeProp.add({
@@ -93,21 +93,12 @@ export const javascriptLanguage = LezerLanguage.define({
   }
 })
 
-/// A language provider for TypeScript.
-export const typescriptLanguage = javascriptLanguage.configure({dialect: "ts"})
 
-/// Language provider for JSX.
-export const jsxLanguage = javascriptLanguage.configure({dialect: "jsx"})
-
-/// Language provider for JSX + TypeScript.
-export const tsxLanguage = javascriptLanguage.configure({dialect: "jsx ts"})
-
-/// JavaScript support. Includes [snippet](#lang-javascript.snippets)
+/// Wren support. Includes [snippet](#lang-javascript.snippets)
 /// completion.
-export function javascript(config) {
-  let lang = config.jsx ? (config.typescript ? tsxLanguage : jsxLanguage)
-    : config.typescript ? typescriptLanguage : javascriptLanguage
-  return new LanguageSupport(lang, javascriptLanguage.data.of({
+export function wren(config = {}) {
+  let lang = wrenLanguage
+  return new LanguageSupport(lang, wrenLanguage.data.of({
     autocomplete: ifNotIn(["LineComment", "BlockComment", "String"], completeFromList(snippets))
   }))
 }

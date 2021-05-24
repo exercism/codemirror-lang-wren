@@ -1,8 +1,8 @@
 import {nodeResolve} from "@rollup/plugin-node-resolve"
 export default {
-  input: "./editor.js",
+  input: "./devtool/editor.js",
   output: {
-    file: "./editor.bundle.js",
+    file: "./devtool/editor.bundle.js",
     format: "iife"
   },
   plugins: [nodeResolve()]

@@ -1,5 +1,5 @@
 import {EditorState, EditorView, basicSetup} from "@codemirror/basic-setup"
-import {javascript} from "./lang-javascript/src/index.js"
+import {wren} from "../src/index.js"
 import {HighlightStyle, classHighlightStyle, tags as t} from "@codemirror/highlight"
 
 
@@ -45,7 +45,7 @@ let editor = new EditorView({
   state: EditorState.create({
     extensions: [
       basicSetup,
-      javascript({}),
+      wren({}),
       highlightStyle
     ],
     // theme: "tomorrow-night-eighties",
