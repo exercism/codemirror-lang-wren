@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 cd javascript
+rm -f src/parser.js
 npm run build
 cd ..
 rollup -c rollup.config.js

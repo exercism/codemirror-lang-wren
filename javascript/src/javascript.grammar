@@ -30,14 +30,16 @@
   assign @right,
   comma @left,
   statement @cut,
-  predicate
+  predicate,
+  forImport @left,
+  forLoop @left
 }
 
 @top Script { statement+ }
 
 statement[@isGroup=Statement] {
   ImportDeclaration |
-  ForStatement { kw<"for"> ckw<"await">? (ForSpec | ForInSpec | ForOfSpec) statement } |
+  ForStatement { !forLoop kw<"for"> (ForSpec | ForInSpec ) statement } |
   WhileStatement { kw<"while"> ParenthesizedExpression statement } |
   WithStatement { kw<"with"> ParenthesizedExpression statement } |
   DoStatement { kw<"do"> statement kw<"while"> ParenthesizedExpression semi } |
@@ -52,7 +54,7 @@ statement[@isGroup=Statement] {
 }
 
 ImportDeclaration {
-  kw<"import"> String (kw<"for"> ImportName ( "," ImportName)*)?
+  kw<"import"> String (!forImport kw<"for"> ImportName ( "," ImportName)*)?
 }
 
 ImportName {
@@ -67,13 +69,12 @@ ForSpec {
 
 forXSpec<op> {
   "("
-  ((kw<"let"> | kw<"var"> | kw<"const">) pattern | VariableName | MemberExpression | ArrayPattern | ObjectPattern)
+  ( VariableName | MemberExpression | ArrayPattern | ObjectPattern)
   !loop op expression
   ")"
 }
 
 ForInSpec { forXSpec<kw<"in">> }
-ForOfSpec { forXSpec<ckw<"of">> }
 
 declaration {
   FunctionDeclaration |
@@ -208,9 +209,14 @@ BinaryExpression {
 }
 
 AssignmentExpression {
+  FieldName !assign "=" expressionNoComma |
   (VariableName | MemberExpression) !assign UpdateOp<($[+\-/%^] | "*" "*"? | "|" "|"? | "&" "&"? | "<<" | ">>" ">"? | "??") "=">
     expressionNoComma |
   (VariableName | MemberExpression | ArrayPattern | ObjectPattern) !assign "=" expressionNoComma
+}
+
+FieldName {
+  "_" identifier
 }
 
 MemberExpression {

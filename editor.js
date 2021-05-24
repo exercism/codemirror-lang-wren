@@ -146,7 +146,7 @@ class Literals is SyntaxExample {
     // Escapes:
     "\\0" // The NUL byte: 0.
     "\\"" // A double quote character.
-    "\\\" // A backslash.
+    "\\\\" // A backslash.
     "\\a" // Alarm beep. (Who uses this?)
     "\\b" // Backspace.
     "\\f" // Formfeed.
