@@ -229,8 +229,6 @@ pkwMod<term> { @extend[@name={term}]<word, term> }
 
 boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
-// Star { "*" }
-
 VariableName { identifier ~arrow }
 
 ClassName { uppercaseWord }
@@ -246,11 +244,6 @@ PropertyNameDefinition { word }
 questionOp[@name=LogicOp] { "?" }
 
 @skip { whitespace | LineComment | BlockComment }
-
-// @external tokens incdecToken from "./tokens" {
-//  incdec[@name=ArithOp],
-//  incdecPrefix[@name=ArithOp]
-// }
 
 @tokens {
   whitespace { std.whitespace+ }
