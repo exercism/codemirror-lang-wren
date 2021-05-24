@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+cd javascript
+npm run build
+cd ..
+rollup -c rollup.config.js
