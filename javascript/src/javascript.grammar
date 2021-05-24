@@ -5,7 +5,6 @@
   union @left,
   else @right,
   member,
-  newArgs,
   call,
   prefix,
   postfix,
@@ -44,7 +43,6 @@ statement[@isGroup=Statement] {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   Block |
-  FunctionDeclaration |
   ClassDeclaration |
   VariableDeclaration |
   ExpressionStatement { expression }
@@ -60,17 +58,13 @@ ImportName {
 
 forXSpec<op> {
   "("
-  ( VariableName | ArrayPattern | ObjectPattern)
+  VariableName
   !loop op expression
   ")"
 }
 
 ForInSpec { forXSpec<kw<"in">> }
 
-
-FunctionDeclaration {
-  !statement kw<"function"> Star? VariableDefinition? functionSignature Block
-}
 
 ClassDeclaration {
   !statement kw<"class"> ClassName
@@ -90,23 +84,23 @@ MethodDeclaration[group=ClassItem] {
 }
 
 VariableDeclaration {
-  kw<"var"> commaSep1<patternAssign>
+  kw<"var"> VariableDefinition ("=" expressionNoComma)?
 }
 
 
 
-pattern { VariableDefinition | ArrayPattern | ObjectPattern }
+// pattern { VariableDefinition | ArrayPattern | ObjectPattern }
 
-ArrayPattern { "[" commaSep<patternAssign> ~destructure "]" }
+// ArrayPattern { "[" commaSep<patternAssign> ~destructure "]" }
 
-ObjectPattern { "{" commaSep<PatternProperty> ~destructure "}" }
+// ObjectPattern { "{" commaSep<PatternProperty> ~destructure "}" }
 
-patternAssign {
-  pattern ("=" expressionNoComma)?
-}
+// patternAssign {
+//   pattern ("=" expressionNoComma)?
+// }
 
 ParamList {
-  "(" commaSep<patternAssign> ")"
+  "(" commaSep<VariableDefinition> ")"
 }
 
 Block {
@@ -203,7 +197,7 @@ AssignmentExpression {
   // FieldName !assign "=" expressionNoComma |
   (VariableName ) !assign UpdateOp<($[+\-/%^] | "*" "*"? | "|" "|"? | "&" "&"? | "<<" | ">>" ">"? | "??") "=">
     expressionNoComma |
-  (VariableName  | ArrayPattern | ObjectPattern) !assign "=" expressionNoComma
+  VariableName  !assign "=" expressionNoComma
 }
 
 // FieldName {

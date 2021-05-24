@@ -68,6 +68,10 @@ class SyntaxExample {
 
     var x = """wow really"""
 
+    var fn = Fn.new() {
+      System.print("hey hey")
+    }
+
     // Block arguments
     fields { block }
     fields {|a, b| block }
