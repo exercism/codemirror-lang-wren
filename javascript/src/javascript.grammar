@@ -69,7 +69,7 @@ ForSpec {
 
 forXSpec<op> {
   "("
-  ( VariableName | MemberExpression | ArrayPattern | ObjectPattern)
+  ( VariableName | ArrayPattern | ObjectPattern)
   !loop op expression
   ")"
 }
@@ -98,8 +98,7 @@ ClassBody {
 
 MethodDeclaration[group=ClassItem] {
   (pkwMod<"static"> | pkwMod<"construct">)?
-  (pkwMod<"get"> | pkwMod<"set"> | Star)?
-  PropertyNameDefinition
+  ClassMethodName
   functionSignature?
   Block
 }
@@ -112,7 +111,7 @@ VariableDeclaration {
 
 pattern { VariableDefinition | ArrayPattern | ObjectPattern }
 
-ArrayPattern { "[" commaSep<"..."? patternAssign> ~destructure "]" }
+ArrayPattern { "[" commaSep<patternAssign> ~destructure "]" }
 
 ObjectPattern { "{" commaSep<PatternProperty> ~destructure "}" }
 
@@ -148,9 +147,7 @@ expressionNoComma {
   ObjectExpression { "{" commaSep<Property> ~destructure "}" } |
   UnaryExpression |
   ParenthesizedExpression |
-  ClassExpression |
   FunctionExpression |
-  MemberExpression |
   BinaryExpression |
   ConditionalExpression { expressionNoComma !ternary questionOp expressionNoComma LogicOp<":"> expressionNoComma } |
   AssignmentExpression |
@@ -161,24 +158,18 @@ expressionNoComma {
 ParenthesizedExpression { "(" expression ")" }
 
 ArrayExpression {
-  "[" commaSep1<"..."? expressionNoComma | ""> ~destructure "]"
+  "[" commaSep1<expressionNoComma | ""> ~destructure "]"
 }
 
 propName { PropertyNameDefinition | "[" expression "]" | Number | String }
 
 Property {
-  pkwMod<"async">? (pkwMod<"get"> | pkwMod<"set"> | Star)? propName functionSignature Block |
-  propName ~destructure (":" expressionNoComma)? |
-  "..." expressionNoComma
+  propName functionSignature Block |
+  propName ~destructure (":" expressionNoComma)?
 }
 
 PatternProperty {
-  "..." patternAssign |
   (PropertyName | Number | String) ~destructure (":" pattern)? ("=" expressionNoComma)?
-}
-
-ClassExpression {
-  kw<"class"> VariableDefinition? (kw<"extends"> expression | TSExtends type)? ClassBody
 }
 
 functionSignature { ParamList  }
@@ -199,7 +190,6 @@ BinaryExpression {
   expressionNoComma !plus ArithOp<"+" | "-"> expressionNoComma |
   expressionNoComma !shift BitOp<">>" ">"? | "<<"> expressionNoComma |
   expressionNoComma !rel (LessThan | CompareOp<"<=" | ">" "="?> | kw<"in"> | kw<"instanceof">) expressionNoComma |
-  expressionNoComma !rel ckw<"as"> (kw<"const"> | type) |
   expressionNoComma !equal CompareOp<"==" "="? | "!=" "="?> expressionNoComma |
   expressionNoComma !bitOr BitOp { "|" } expressionNoComma |
   expressionNoComma !bitXor BitOp<"^"> expressionNoComma |
@@ -209,45 +199,22 @@ BinaryExpression {
 }
 
 AssignmentExpression {
-  FieldName !assign "=" expressionNoComma |
-  (VariableName | MemberExpression) !assign UpdateOp<($[+\-/%^] | "*" "*"? | "|" "|"? | "&" "&"? | "<<" | ">>" ">"? | "??") "=">
+  // FieldName !assign "=" expressionNoComma |
+  (VariableName ) !assign UpdateOp<($[+\-/%^] | "*" "*"? | "|" "|"? | "&" "&"? | "<<" | ">>" ">"? | "??") "=">
     expressionNoComma |
-  (VariableName | MemberExpression | ArrayPattern | ObjectPattern) !assign "=" expressionNoComma
+  (VariableName  | ArrayPattern | ObjectPattern) !assign "=" expressionNoComma
 }
 
-FieldName {
-  "_" identifier
-}
+// FieldName {
+//   "_" identifier
+// }
 
-MemberExpression {
-  expressionNoComma !member (("." | "?.") PropertyName | "[" expression "]")
-}
+// MemberExpression {
+//   expressionNoComma !member (("." | "?.") PropertyName | "[" expression "]")
+// }
 
 ArgList {
-  "(" commaSep<"..."? expressionNoComma> ")"
-}
-
-
-typeofMemberExpression[@name=MemberExpression] {
-  VariableName !member (("." | "?.") PropertyName | "[" expression "]")
-}
-
-type[@isGroup=Type] {
-  ThisType { kw<"this"> } |
-  LiteralType {
-   ArithOp<"+" | "-">? Number |
-   boolean |
-   String
-  } |
-  TypeofType { kw<"typeof"> (VariableName | typeofMemberExpression) } |
-  ParenthesizedType { "(" type ")" } |
-  IndexedType { type !typeMember ("." PropertyName | "[" (String | Number) "]")+ } |
-  TupleType { "[" commaSep<(Label ":")? type | "..." type> "]" } |
-  ArrayType { type "[" "]" | type "[" "]" } |
-  UnionType { type !union LogicOp { "|" } type } |
-  IntersectionType { type !intersection LogicOp { "&" } type } |
-  ConditionalType { type !typeTernary questionOp ~arrow type LogicOp<":"> type } |
-  TypeName
+  "(" commaSep<expressionNoComma> ")"
 }
 
 commaSep<content> {
@@ -282,19 +249,17 @@ VariableName { identifier ~arrow }
 
 VariableDefinition { identifier ~arrow }
 
-TypeName { identifier ~arrow }
-
 Label { identifier }
 
 PropertyName { word }
+
+ClassMethodName { word "="? }
 
 PropertyNameDefinition { word }
 
 questionOp[@name=LogicOp] { "?" }
 
 @skip { whitespace | LineComment | BlockComment }
-
-@external extend { identifier } tsExtends from "./tokens" { TSExtends[@name=extends] }
 
 @external tokens noSemicolon from "./tokens" { noSemi }
 
@@ -356,8 +321,6 @@ questionOp[@name=LogicOp] { "?" }
   LessThan[@name=CompareOp] { "<" }
 
   "="[@name=Equals]
-  "..."[@name=Spread]
-  "=>"[@name=Arrow]
 
   "(" ")" "[" "]" "{" "}"
 
