@@ -1,14 +1,10 @@
 @precedence {
   highest @left,
   methodEqual @left,
-  intersection @left,
   union @left,
   else @right,
-  member,
   call,
   prefix,
-  postfix,
-  exp @left,
   times @left,
   plus @left,
   range @left,
@@ -26,7 +22,6 @@
   assign @right,
   comma @left,
   statement @cut,
-  predicate,
   forImport @left,
   forLoop @left
 }
@@ -41,7 +36,7 @@ statement[@isGroup=Statement] {
   ForStatement { !forLoop kw<"for"> (ForInSpec ) statement } |
   WhileStatement { kw<"while"> ParenthesizedExpression statement } |
   IfStatement { kw<"if"> ParenthesizedExpression statement (!else kw<"else"> statement)? } |
-  ReturnStatement { kw<"return">  } |
+  ReturnStatement { kw<"return"> } |
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   Block |
@@ -69,7 +64,8 @@ ForInSpec { forXSpec<kw<"in">> }
 
 
 ClassDeclaration {
-  !statement kw<"class"> ClassName
+  // TODO:should this be kwMod or pkwMod?
+  kw<"foreign">? !statement kw<"class"> ClassName
   (kw<"is"> ClassName)?
   ClassBody
 }
@@ -79,7 +75,9 @@ ClassBody {
 }
 
 MethodDeclaration[group=ClassItem] {
-  (pkwMod<"static"> | pkwMod<"foreign"> | pkwMod<"construct">)?
+  pkwMod<"static">?
+  pkwMod<"foreign">?
+  pkwMod<"construct">?
   ClassMethodName
   functionSignature?
   Block
@@ -178,16 +176,15 @@ UnaryExpression {
 }
 
 BinaryExpression {
-  expressionNoComma !exp ArithOp<"**"> expressionNoComma |
   expressionNoComma !times (divide | ArithOp<"%"> | ArithOp<"*">) expressionNoComma |
   expressionNoComma !plus ArithOp<"+" | "-"> expressionNoComma |
-  expressionNoComma !range (".." | "...") expressionNoComma |
+  expressionNoComma !range RangeOp<".." | "..."> expressionNoComma |
   expressionNoComma !shift BitOp<">>" | "<<"> expressionNoComma |
   expressionNoComma !bitAnd BitOp { "&" } expressionNoComma |
   expressionNoComma !bitXor BitOp<"^"> expressionNoComma |
   expressionNoComma !bitOr BitOp { "|" } expressionNoComma |
   expressionNoComma !rel (LessThan | CompareOp<"<=" | ">" "="?>) expressionNoComma |
-  // expressionNoComma !is "is" expressionNoComma |
+  expressionNoComma !is kw<"is"> expressionNoComma |
   expressionNoComma !equal CompareOp<"==" | "!="> expressionNoComma |
   expressionNoComma !and LogicOp<"&&"> expressionNoComma |
   expressionNoComma !or LogicOp<"||"> expressionNoComma
@@ -195,9 +192,7 @@ BinaryExpression {
 
 AssignmentExpression {
   // FieldName !assign "=" expressionNoComma |
-  (VariableName ) !assign UpdateOp<($[+\-/%^] | "*" "*"? | "|" "|"? | "&" "&"? | "<<" | ">>" ">"? | "??") "=">
-    expressionNoComma |
-  VariableName  !assign "=" expressionNoComma
+  VariableName !assign "=" expressionNoComma
 }
 
 // FieldName {
@@ -296,12 +291,11 @@ questionOp[@name=LogicOp] { "?" }
   @precedence { uppercaseWord, word }
 
   Number {
-    (std.digit ("_" | std.digit)* ("." ("_" | std.digit)*)? | "." std.digit ("_" | std.digit)*)
-      (("e" | "E") ("+" | "-")? ("_" | std.digit)+)? |
-    std.digit ("_" | std.digit)* "n" |
-    "0x" (std.digit | $[a-fA-F] | "_")+ |
-    "0b" $[01_]+ |
-    "0o" $[0-7_]+
+    (std.digit (std.digit)* ("." (std.digit)*)? | "." std.digit (std.digit)*)
+      (("e" | "E") ("+" | "-")? (std.digit)+)? |
+    "0x" (std.digit | $[a-fA-F])+
+    // "0b" $[01_]+ |
+    // "0o" $[0-7_]+
   }
 
   String {
@@ -309,11 +303,11 @@ questionOp[@name=LogicOp] { "?" }
     '"""' (_)* '"""'
   }
 
+  RangeOp<expr> { expr }
   ArithOp<expr> { expr }
   LogicOp<expr> { expr }
   BitOp<expr> { expr }
   CompareOp<expr> { expr }
-  UpdateOp<expr> { expr }
 
   LessThan[@name=CompareOp] { "<" }
 
