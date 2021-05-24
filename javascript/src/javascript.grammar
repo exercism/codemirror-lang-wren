@@ -138,7 +138,6 @@ SequenceExpression {
 expressionNoComma {
   Number |
   String |
-  TemplateString |
   VariableName |
   boolean |
   kw<"this"> |
@@ -146,7 +145,6 @@ expressionNoComma {
   kw<"super"> |
   ArrayExpression |
   ObjectExpression { "{" commaSep<Property> ~destructure "}" } |
-  NewExpression { kw<"new"> expressionNoComma } |
   UnaryExpression |
   ParenthesizedExpression |
   ClassExpression |
@@ -156,8 +154,7 @@ expressionNoComma {
   ConditionalExpression { expressionNoComma !ternary questionOp expressionNoComma LogicOp<":"> expressionNoComma } |
   AssignmentExpression |
   PostfixExpression { expressionNoComma !postfix (incdec | LogicOp<"!">) } |
-  CallExpression { expressionNoComma !call ArgList } |
-  TaggedTemplatExpression { expressionNoComma !taggedTemplate TemplateString }
+  CallExpression { expressionNoComma !call ArgList }
 }
 
 ParenthesizedExpression { "(" expression ")" }
@@ -236,7 +233,6 @@ type[@isGroup=Type] {
    boolean |
    String
   } |
-  TemplateType |
   TypeofType { kw<"typeof"> (VariableName | typeofMemberExpression) } |
   ParenthesizedType { "(" type ")" } |
   IndexedType { type !typeMember ("." PropertyName | "[" (String | Number) "]")+ } |
@@ -247,20 +243,6 @@ type[@isGroup=Type] {
   ConditionalType { type !typeTernary questionOp ~arrow type LogicOp<":"> type } |
   TypeName
 }
-
-@skip {} {
-  TemplateString {
-    templateStart (templateContent | templateExpr)* templateEnd
-  }
-
-  TemplateType {
-    templateStart (templateContent | templateType)* templateEnd
-  }
-}
-
-templateExpr { templateDollarBrace expression templateClosingBrace }
-
-templateType { templateDollarBrace type templateClosingBrace }
 
 commaSep<content> {
   "" | content ("," content?)*
@@ -315,12 +297,6 @@ questionOp[@name=LogicOp] { "?" }
  incdecPrefix[@name=ArithOp]
 }
 
-@external tokens template from "./tokens" {
-  templateContent,
-  templateDollarBrace,
-  templateEnd
-}
-
 @tokens {
   whitespace { std.whitespace+ }
 
@@ -364,10 +340,6 @@ questionOp[@name=LogicOp] { "?" }
   String {
     '"' (![\\\n"] | "\\" _)* '"'?
   }
-
-  templateStart { "`" }
-
-  templateClosingBrace { "}" }
 
   ArithOp<expr> { expr }
   LogicOp<expr> { expr }
