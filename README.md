@@ -31,19 +31,18 @@ npm run build-devtool
 <dt id="user-content-wren">
   <code>wren() → <a href="https://codemirror.net/6/docs/ref#language.LanguageSupport">LanguageSupport</a></code></dt>
 
-<dd><p>Wren support. Includes <a href="#user-content-snippets">snippet</a>
-completion.</p>
+<dd><p>Wren support. Includes snippet completion.</p>
 </dd>
 <dt id="user-content-wrenlanguage">
   <code>wrenLanguage: <a href="https://codemirror.net/6/docs/ref#language.LezerLanguage">LezerLanguage</a></code></dt>
 
-<dd><p>A language provider based on the <a href="https://github.com/lezer-parser/wren">Lezer wren
-parser</a>, extended with
+<dd><p>A language provider based on the Lezer Wren
+parser provided in this very same package, extended with
 highlighting and indentation information.</p>
 </dd>
 
 <dt id="user-content-snippets">
-  <code><a href="#user-content-snippets">snippets</a>: <a href="https://codemirror.net/6/docs/ref#autocomplete.Completion">Completion</a>[]</code></dt>
+  <code>snippets: <a href="https://codemirror.net/6/docs/ref#autocomplete.Completion">Completion</a>[]</code></dt>
 
 <dd><p>A collection of simple Wren-related
 <a href="https://codemirror.net/6/docs/ref/#autocomplete.snippet">snippets</a>.</p>
