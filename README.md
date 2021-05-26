@@ -1,6 +1,6 @@
 <!-- NOTE: README.md is generated from src/README.md -->
 
-# codemirror-lang-wren ![NPM version](https://img.shields.io/badge/npm-notyet-red)
+# codemirror-lang-wren ![NPM Version](https://img.shields.io/npm/v/@exercism/codemirror-lang-wren)
 
 This package implements Wren language support for the
 [CodeMirror](https://codemirror.net/6/) code editor.  Originally derived from the JavaScript grammar and language support.

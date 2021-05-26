@@ -1,22 +1,27 @@
 {
-  "name": "codemirror-lang-wren",
-  "version": "0.5",
+  "name": "@exercism/codemirror-lang-wren",
   "description": "Wren language support for the CodeMirror code editor",
+  "author": "Josh Goebel <me@joshgoebel.com>",
+  "version": "0.5.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/exercism/codemirror-lang-wren"
+  },
   "main": "dist/index.cjs",
+  "module": "dist/index.es.js",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs"
+  },
   "scripts": {
     "test": "mocha test/test-*.js",
+    "prepare": "npm run build",
     "build": "npm run build-grammar && rollup -c",
     "build-debug": "lezer-generator src/wren.grammar --names -o src/lezer/parser && rollup -c",
     "build-grammar": "lezer-generator src/lezer/wren.grammar -o src/lezer/parser",
     "build-devtool": "npm run build-grammar && rollup -c rollup.config.devtool.js"
   },
-  "author": "Josh Goebel <me@joshgoebel.com>",
-  "license": "MIT",
-  "exports": {
-    "import": "./dist/index.es.js",
-    "require": "./dist/index.cjs"
-  },
-  "module": "dist/index.es.js",
   "dependencies": {
     "@codemirror/autocomplete": "^0.18.5",
     "@codemirror/highlight": "^0.18.4",
@@ -29,5 +34,8 @@
     "mocha": "^8.1.3",
     "rollup": "^2.27.1",
     "lezer": "^0.13.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
