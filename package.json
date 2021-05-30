@@ -10,10 +10,6 @@
   },
   "main": "dist/index.cjs",
   "module": "dist/index.es.js",
-  "exports": {
-    "import": "./dist/index.es.js",
-    "require": "./dist/index.cjs"
-  },
   "types": "index.d.ts",
   "scripts": {
     "test": "mocha test/test-*.js",
