@@ -1,8 +1,8 @@
 {
   "name": "@exercism/codemirror-lang-wren",
-  "description": "Wren language support for the CodeMirror code editor",
+  "description": "Wren Lezer parser and language support for CodeMirror",
   "author": "Josh Goebel <me@joshgoebel.com>",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "MIT",
   "repository": {
     "type": "git",

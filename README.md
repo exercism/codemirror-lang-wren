@@ -33,6 +33,7 @@ npm run build-devtool
 
 <dd><p>Wren support. Includes snippet completion.</p>
 </dd>
+
 <dt id="user-content-wrenlanguage">
   <code>wrenLanguage: <a href="https://codemirror.net/6/docs/ref#language.LezerLanguage">LezerLanguage</a></code></dt>
 
@@ -40,6 +41,13 @@ npm run build-devtool
 parser provided in this very same package, extended with
 highlighting and indentation information.</p>
 </dd>
+
+<dt>
+  <code>lezerParser: <a href="https://lezer.codemirror.net/docs/ref/#lezer.Parser">Lezer#Parser</a></code></dt>
+
+<dd><p>Lezer Wren parser.</p>
+</dd>
+
 
 <dt id="user-content-snippets">
   <code>snippets: <a href="https://codemirror.net/6/docs/ref#autocomplete.Completion">Completion</a>[]</code></dt>
