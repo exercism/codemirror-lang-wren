@@ -6,6 +6,8 @@ import {styleTags, tags as t} from "@codemirror/highlight"
 import {completeFromList, ifNotIn} from "@codemirror/autocomplete"
 import {snippets} from "./snippets"
 
+export const lezerParser = parser;
+
 export const wrenLanguage = LezerLanguage.define({
   parser: parser.configure({
     props: [
