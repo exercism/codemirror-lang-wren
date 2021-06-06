@@ -253,6 +253,19 @@ questionOp[@name=LogicOp] { "?" }
 
 @skip { whitespace | LineComment | BlockComment }
 
+Interpolation { "%(" expression ")"}
+
+@skip {} {
+  // '"' (![\\\n"] | "\\" _)* '"'? |
+  // '"""' (_)* '"""'
+
+  StringEscape { HexEscape | UnicodeEscape | CharEscape }
+  String {
+    '"""' anyStringContent* '"""' |
+    '"' (StringEscape | Interpolation | stringContent)* '"'
+  }
+}
+
 @tokens {
   whitespace { std.whitespace+ }
 
@@ -272,11 +285,42 @@ questionOp[@name=LogicOp] { "?" }
 
   divide[@name=ArithOp] { "/" }
 
+  // "\0" // The NUL byte: 0.
+  // "\"" // A double quote character.
+  // "\\" // A backslash.
+  // "\%" // A percent sign.
+  // "\a" // Alarm beep. (Who uses this?)
+  // "\b" // Backspace.
+  // "\e" // ESC character.
+  // "\f" // Formfeed.
+  // "\n" // Newline.
+  // "\r" // Carriage return.
+  // "\t" // Tab.
+  // "\v" // Vertical tab.
+
+  // "\x48"        // Unencoded byte     (2 hex digits)
+  // "\u0041"      // Unicode code point (4 hex digits)
+  // "\U0001F64A"  // Unicode code point (8 hex digits)
+
+  anyStringContent { _ }
+  stringContent { !["] }
+
+  UnicodeEscape {
+    "\\u" hexDigit hexDigit hexDigit hexDigit  |
+    "\\U" hexDigit hexDigit hexDigit hexDigit hexDigit hexDigit hexDigit hexDigit
+  }
+
+  HexEscape { "\\x" hexDigit hexDigit }
+
+  CharEscape { "\\0" | '\\"' | "\\\\" | "\\%" | "\\a" | "\\b" | "\\e" | "\\f" | "\\n" | "\\r" | "\\t" | "\\v" }
+
   @precedence { BlockComment, LineComment, divide }
 
   identifierChar { std.asciiLetter | $[_$\u{a1}-\u{10ffff}] }
 
   uppercaseChar { std.asciiUppercase }
+
+  hexDigit { std.digit | $[a-f] | $[A-F] }
 
   uppercaseWord { uppercaseChar (identifierChar | std.digit)* }
 
@@ -300,11 +344,6 @@ questionOp[@name=LogicOp] { "?" }
     // "0o" $[0-7_]+
   }
 
-  String {
-    '"' (![\\\n"] | "\\" _)* '"'? |
-    '"""' (_)* '"""'
-  }
-
   RangeOp<expr> { expr }
   ArithOp<expr> { expr }
   LogicOp<expr> { expr }
@@ -318,6 +357,10 @@ questionOp[@name=LogicOp] { "?" }
   "(" ")" "[" "]" "{" "}"
 
   "." "," ":" "|"
+
+  '"' '"""'
+
+  "%("
 }
 
 // @external tokens insertSemicolon from "./tokens" { insertSemi }
