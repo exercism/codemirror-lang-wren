@@ -2,6 +2,14 @@ import {nodeResolve} from "@rollup/plugin-node-resolve"
 
 export default {
   input: "./src/index.js",
+  external: [
+    '@codemirror/language',
+    '@codemirror/highlight',
+    '@codemirror/autocomplete',
+    'lezer',
+    'lezer-tree'
+  ],
+
   output: [{
     format: "cjs",
     file: "./dist/index.cjs"
@@ -11,6 +19,6 @@ export default {
   }],
   // external(id) { return !/^[\.\/]/.test(id) },
   plugins: [
-    nodeResolve()
+    nodeResolve(),
   ]
 }
