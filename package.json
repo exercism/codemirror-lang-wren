@@ -28,9 +28,9 @@
     "build-devtool": "npm run build-grammar && rollup -c rollup.config.devtool.js"
   },
   "dependencies": {
-    "@codemirror/autocomplete": "0.19",
-    "@codemirror/highlight": "0.19",
-    "@codemirror/language": "0.19"
+    "@codemirror/autocomplete": "^0.19.4",
+    "@codemirror/highlight": "^0.19.6",
+    "@codemirror/language": "^0.19.3"
   },
   "devDependencies": {
     "@codemirror/basic-setup": "0.19",
@@ -38,7 +38,7 @@
     "colors": "^1.4.0",
     "lezer": "^0.13.5",
     "lezer-generator": "^0.13.4",
-    "mocha": "^8.4.0",
+    "mocha": "^9.0.0",
     "rollup": "^2.50.4"
   },
   "files": [
