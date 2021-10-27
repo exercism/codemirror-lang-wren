@@ -6,8 +6,8 @@ export default {
     '@codemirror/language',
     '@codemirror/highlight',
     '@codemirror/autocomplete',
-    'lezer',
-    'lezer-tree'
+    '@lezer/lr',
+    '@lezer/common'
   ],
 
   output: [{
