@@ -1,5 +1,5 @@
 import {parser} from "./lezer/parser.js"
-import {LezerLanguage, LanguageSupport,
+import {LRLanguage, LanguageSupport,
         delimitedIndent, flatIndent, continuedIndent, indentNodeProp,
         foldNodeProp, foldInside} from "@codemirror/language"
 import {styleTags, tags as t} from "@codemirror/highlight"
@@ -8,7 +8,7 @@ import {snippets} from "./snippets"
 
 export const lezerParser = parser;
 
-export const wrenLanguage = LezerLanguage.define({
+export const wrenLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       indentNodeProp.add({

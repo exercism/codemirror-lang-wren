@@ -14,7 +14,7 @@ This code is released under an
 
 ### Language Support + Lezer Grammar
 
-This includes both the CodeMirror `LanguageSupport` and the `LezerLanguage` grammar all bundled into a single small repository with a simple build process.
+This includes both the CodeMirror `LanguageSupport` and the `LRLanguage` grammar all bundled into a single small repository with a simple build process.
 
 
 ### Maintainers
@@ -35,7 +35,7 @@ npm run build-devtool
 </dd>
 
 <dt id="user-content-wrenlanguage">
-  <code>wrenLanguage: <a href="https://codemirror.net/6/docs/ref#language.LezerLanguage">LezerLanguage</a></code></dt>
+  <code>wrenLanguage: <a href="https://codemirror.net/6/docs/ref#language.LRLanguage">LRLanguage</a></code></dt>
 
 <dd><p>A language provider based on the Lezer Wren
 parser provided in this very same package, extended with
