@@ -4,7 +4,7 @@ export default {
   input: "./src/index.js",
   external: [
     '@codemirror/language',
-    '@codemirror/highlight',
+    '@lezer/highlight',
     '@codemirror/autocomplete',
     '@lezer/lr',
     '@lezer/common'
@@ -19,6 +19,6 @@ export default {
   }],
   // external(id) { return !/^[\.\/]/.test(id) },
   plugins: [
-    nodeResolve(),
+    nodeResolve,
   ]
 }

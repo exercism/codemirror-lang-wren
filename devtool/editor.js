@@ -1,12 +1,8 @@
-import {EditorState, EditorView, basicSetup} from "@codemirror/basic-setup"
+import {EditorView, basicSetup} from "codemirror"
 import {wren} from "../src/index.js"
-import {HighlightStyle, classHighlightStyle, tags as t} from "@codemirror/highlight"
+import {tags as t} from "@lezer/highlight"
+import {syntaxHighlighting, HighlightStyle} from "@codemirror/language"
 
-
-// classHighlightStyle.match = ((tag, scope) => {
-//   console.log(tag,scope);
-//   return scope.name;
-// }).bind(classHighlightStyle);
 
 const highlightStyle = HighlightStyle.define([
   {tag: t.link, class: "cmt-link"},
@@ -42,14 +38,14 @@ const highlightStyle = HighlightStyle.define([
 
 
 let editor = new EditorView({
-  state: EditorState.create({
-    extensions: [
-      basicSetup,
-      wren({}),
-      highlightStyle
-    ],
-    // theme: "tomorrow-night-eighties",
-    doc: `// This file provides examples of syntactic constructs in wren, which is mainly
+  parent: document.body,
+  extensions: [
+    basicSetup,
+    wren({}),
+    syntaxHighlighting(highlightStyle)
+  ],
+  // theme: "tomorrow-night-eighties",
+  doc: `// This file provides examples of syntactic constructs in wren, which is mainly
 // interesting for testing syntax highlighters.
 
 // This is a comment.
@@ -243,6 +239,4 @@ class Literals is SyntaxExample {
     }
   }
 }`
-  }),
-  parent: document.body
 })
