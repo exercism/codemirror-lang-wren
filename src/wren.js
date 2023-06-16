@@ -1,8 +1,8 @@
 import {parser} from "./lezer/parser.js"
 import {LRLanguage, LanguageSupport,
-        delimitedIndent, flatIndent, continuedIndent, indentNodeProp,
+        delimitedIndent, continuedIndent, indentNodeProp,
         foldNodeProp, foldInside} from "@codemirror/language"
-import {styleTags, tags as t} from "@codemirror/highlight"
+import {styleTags, tags as t} from "@lezer/highlight"
 import {completeFromList, ifNotIn} from "@codemirror/autocomplete"
 import {snippets} from "./snippets"
 

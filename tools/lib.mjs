@@ -1,5 +1,5 @@
 export const walkTree = (tree, data, visitFn) => {
-  let cursor = tree.topNode.cursor;
+  let cursor = tree.topNode.cursor();
   walkTree_(cursor, -1, visitFn);
 
   function walkTree_(cursor, depth = 0, visitFn) {
