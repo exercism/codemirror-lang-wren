@@ -53,7 +53,7 @@ const printTree = (tree) => {
 
 
 const startTree = (tree, visitFn) => {
-  var c = tree.topNode.cursor;
+  var c = tree.topNode.cursor();
   var out = "";
   var tabs = 0;
   var vars = {};
